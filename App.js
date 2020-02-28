@@ -1,16 +1,18 @@
 import React, {Component} from 'react';
 // eslint-disable-next-line no-unused-vars
-import {Button, StyleSheet, View, Text} from 'react-native';
+import {Button, StyleSheet, View, Text, TextInput} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
-function HomeScreen() {
+function Niveau({navigation}) {
   return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <Text>Home Screen</Text>
+    <View>
+      <Text>Niveau:</Text>
     </View>
   );
 }
+
+const Stack = createStackNavigator();
 
 class App extends Component {
   constructor(props) {
@@ -20,10 +22,29 @@ class App extends Component {
 
   getInitialState = () => {
     this.setState({
-      score: (this.state.score = 0),
-      niveau: (this.state.niveau = 1),
+      score: 0,
+      niveau: 1,
     });
   };
+
+  Jeu({route, navigation}) {
+    const {score, niveau} = route.params;
+    return (
+      <View>
+        <View>
+          <Button onPress={() => this.incrementScore()} title="Click moi" />
+        </View>
+        <View style={{alignItems: 'center'}}>
+          <Text>Score: {JSON.stringify(score)}</Text>
+          <Text>Niveau: {JSON.stringify(niveau)}</Text>
+        </View>
+        <View>
+          <Button onPress={() => this.getInitialState()} title="Redémare" />
+        </View>
+      </View>
+    );
+  }
+//app container
 
   incrementScore = () => {
     this.IncrementNiveau();
@@ -42,35 +63,21 @@ class App extends Component {
 
   render() {
     return (
-      <View>
-        <View>
-          <Button
-            onPress={() => this.incrementScore()}
-            title="Click on the button"
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Jeu">
+          <Stack.Screen
+            name="Jeu"
+            component={this.Jeu}
+            initialParams={{score: 0, niveau: 1}}
           />
-        </View>
-        <View style={{alignItems: 'center'}}>
-          <Text>Score: {this.state.score}</Text>
-          <Text>Niveau: {this.state.niveau}</Text>
-        </View>
-        <View>
-          <Button onPress={() => this.getInitialState()} title="Start again" />
-        </View>
-        {this.state.niveau > 1 || this.state.niveau === 2 || this.state.niveau === 3 || this.state.niveau === 4 ? (
-            alert('Bravoooooo vous avez passé un niveau, vous pouvez finalement accéder à votre fiche de score')
-            <Button
-            title="Go to Details"
-            onPress={() => {
-              navigation.navigate('Details', {
-                niveau: this.state.niveau,
-                otherParam: 'anything you want here',
-              });
-            }}
+          <Stack.Screen
+            name="Niveau"
+            component={Niveau}
+            initialParams={{score: 5, niveau: 2}}
           />
-        ) : null}
-      </View>
+        </Stack.Navigator>
+      </NavigationContainer>
     );
   }
 }
-
 export default App;
